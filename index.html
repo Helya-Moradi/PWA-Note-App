@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset='utf-8'>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <link rel="manifest" href="/manifest.json" />
+  <link rel='stylesheet' href='css/style.css'>
+  <title>Note App</title>
+</head>
+
+<body>
+  <div>
+
+    <section id="home">
+      <div class="container">
+        <h1 class="header">Note App</h1>
+
+        <div class="flex-container">
+          <input id="input-field" type="text" placeholder="Something here..">
+
+          <div id='color-select'>
+            <div class='color-box' style="background-color: #fff;"></div>
+            <div class='color-box' style="background-color: #FFD37F;"></div>
+            <div class='color-box' style="background-color: #FFFA81;"></div>
+            <div class='color-box' style="background-color: #D5FA80;"></div>
+            <div class='color-box' style="background-color: #78F87F;"></div>
+            <div class='color-box' style="background-color: #79FBD6;"></div>
+            <div class='color-box' style="background-color: #79FDFE;"></div>
+            <div class='color-box' style="background-color: #7AD6FD;"></div>
+            <div class='color-box' style="background-color: #7B84FC;"></div>
+            <div class='color-box' style="background-color: #D687FC;"></div>
+            <div class='color-box' style="background-color: #FF89FD;"></div>
+          </div>
+
+          <div class="btn-container">
+            <button id="btn-add" type="button" class="btn" >Add</button>
+            <button id="btn-delete" type="button" class="btn">Delete</button>
+          </div>
+        </div>
+
+        <div class="notes">
+
+            <div class="container">
+              <div class="row">
+                <div id='listed' class="card-columns">
+
+
+                </div>
+              </div>
+            </div>
+
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <script type='text/javascript' src='js/app.js'></script>
+  <script src="register.js"></script>
+
+</body>
+
+</html>

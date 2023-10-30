@@ -1,0 +1,23 @@
+{
+  "name": "Note App",
+  "short_name": "Note App",
+  "display": "standalone",
+  "start_url": "/",
+  "orientation": "portrait-primary",
+  "background_color": "#fff",
+  "theme_color": "#fff",
+  "description": "A new note app.",
+  "icons": [
+    {
+      "src": "icons/Icon-108@2x.png",
+      "sizes": "216x216",
+      "type": "image/png"
+    },
+    {
+      "src": "icons/Icon-40@2x.png",
+      "sizes": "80x80",
+      "type": "image/png"
+    }
+  ]
+}
+
