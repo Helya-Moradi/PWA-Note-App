@@ -2,6 +2,7 @@ const staticCacheName="note-app+"
 const cacheAssets= [
     "/",
     "/css/style.css",
+    "/manifest.json",
     "/js/app.js",
     "/icons/Icon-108@2x.png",
     "/icons/Icon-40@2x.png"
@@ -79,15 +80,33 @@ function networkOnly(request) {
 }
 
 function staleWhileRevalidate(request){
-    return caches.match(request)
-        .then(cachedResponse=>{
-            const fetchedResponse = fetch(event.request)
-                .then((networkResponse) => {
-                   return networkResponse;
-                 });
+    return caches.open(staticCacheName)
+        // .then(cache=>{
+        //     cache.match(request)
+        //         .then(cacheRes=>{
+        //             fetchRes=fetch(request)
+        //                 .then(res=>{
+        //                     cache.put(request,res.clone())
+        //
+        //                     return res
+        //                 })
+        //
+        //             return cacheRes || fetchRes
+        //         })
+        // })
+    console.log('run')
 
-            return cachedResponse || fetchedResponse;
-        })
+        return caches.open(staticCacheName)
+            .then((cache)=> {
+                cache.match(request)
+                    .then( (cacheResponse)=> {
+                        fetch(request)
+                            .then((networkResponse)=> {
+                                cache.put(request, networkResponse)
+                            })
+                        return cacheResponse || networkResponse
+                    })
+            })
 }
 
 self.addEventListener("fetch",evt => {
