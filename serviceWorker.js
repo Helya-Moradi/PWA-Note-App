@@ -79,6 +79,40 @@ function networkOnly(request) {
     })
 }
 
+async function fetchAndCacheIfOk(request) {
+    console.log('network')
+    try {
+        const response = await fetch(request);
+
+        // don't cache non-ok responses
+        if (response.ok) {
+            const responseClone = response.clone();
+            const cache = await caches.open(staticCacheName);
+            await cache.put(request, responseClone);
+        }
+
+        return response;
+    } catch (e) {
+        return e;
+    }
+}
+
+async function fetchWithCache(request) {
+    console.log('staleWhile')
+
+    const cache = await caches.open(staticCacheName);
+    const response = await cache.match(request);
+    if (!!response) {
+        // it is cached but we want to update it so request but not await
+        fetchAndCacheIfOk(request);
+        // return the cached response
+        return response;
+    } else {
+        // it was not cached yet so request and cache
+        return fetchAndCacheIfOk(request);
+    }
+}
+
 function staleWhileRevalidate(request){
     console.log('staleWhileRevalidate', request.url)
 
