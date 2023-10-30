@@ -80,39 +80,49 @@ function networkOnly(request) {
 }
 
 function staleWhileRevalidate(request){
-    return caches.open(staticCacheName)
-        // .then(cache=>{
-        //     cache.match(request)
-        //         .then(cacheRes=>{
-        //             fetchRes=fetch(request)
-        //                 .then(res=>{
-        //                     cache.put(request,res.clone())
-        //
-        //                     return res
-        //                 })
-        //
-        //             return cacheRes || fetchRes
-        //         })
-        // })
-    console.log('run')
+    console.log('staleWhileRevalidate', request.url)
 
-        return caches.open(staticCacheName)
-            .then((cache)=> {
-                cache.match(request)
-                    .then( (cacheResponse)=> {
-                        fetch(request)
-                            .then((networkResponse)=> {
-                                cache.put(request, networkResponse)
-                            })
-                        return cacheResponse || networkResponse
-                    })
-            })
+    // return caches.open(staticCacheName)
+    // .then(cache=>{
+    //     cache.match(request)
+    //         .then(cacheRes=>{
+    //             fetchRes=fetch(request)
+    //                 .then(res=>{
+    //                     cache.put(request,res.clone())
+    //
+    //                     return res
+    //                 })
+    //
+    //             return cacheRes || fetchRes
+    //         })
+    // })
+
+    return caches.open(staticCacheName)
+        .then((cache)=> {
+            cache.match(request)
+                .then( (cacheResponse)=> {
+                    fetch(request)
+                        .then((networkResponse)=> {
+                           cache.put(request, networkResponse)
+                        })
+                    return cacheResponse || networkResponse
+                })
+        })
 }
 
 self.addEventListener("fetch",evt => {
     console.log('fetch', evt.request.url)
 
-    evt.respondWith(
-        cacheFirst(evt.request)
-    )
+    const url = new URL(evt.request.url);
+    const isPrecachedRequest = cacheAssets.includes(url.pathname);
+
+    if(isPrecachedRequest){
+        evt.respondWith(
+            cacheFirst(evt.request)
+        )
+    }else {
+        evt.respondWith(
+            networkFirst(evt.request)
+        )
+    }
 })
