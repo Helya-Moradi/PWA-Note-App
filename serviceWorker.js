@@ -82,66 +82,33 @@ function networkOnly(request) {
 async function fetchAndCacheIfOk(request) {
     console.log('network')
     try {
-        const response = await fetch(request);
+        fetch(request)
+            .then(response=>{
+                if(response.ok){
+                    caches.open(staticCacheName)
+                        .then(cache=>{
+                            cache.put(request,response.clone())
+                        })
+                }
 
-        // don't cache non-ok responses
-        if (response.ok) {
-            const responseClone = response.clone();
-            const cache = await caches.open(staticCacheName);
-            await cache.put(request, responseClone);
-        }
-
-        return response;
+                return response
+            })
     } catch (e) {
         return e;
     }
 }
 
-async function fetchWithCache(request) {
+async function staleWhileRevalidate(request) {
     console.log('staleWhile')
 
     const cache = await caches.open(staticCacheName);
     const response = await cache.match(request);
     if (!!response) {
-        // it is cached but we want to update it so request but not await
         fetchAndCacheIfOk(request);
-        // return the cached response
         return response;
     } else {
-        // it was not cached yet so request and cache
         return fetchAndCacheIfOk(request);
     }
-}
-
-function staleWhileRevalidate(request){
-    console.log('staleWhileRevalidate', request.url)
-
-    // return caches.open(staticCacheName)
-    // .then(cache=>{
-    //     cache.match(request)
-    //         .then(cacheRes=>{
-    //             fetchRes=fetch(request)
-    //                 .then(res=>{
-    //                     cache.put(request,res.clone())
-    //
-    //                     return res
-    //                 })
-    //
-    //             return cacheRes || fetchRes
-    //         })
-    // })
-
-    return caches.open(staticCacheName)
-        .then((cache)=> {
-            cache.match(request)
-                .then( (cacheResponse)=> {
-                    fetch(request)
-                        .then((networkResponse)=> {
-                           cache.put(request, networkResponse)
-                        })
-                    return cacheResponse || networkResponse
-                })
-        })
 }
 
 self.addEventListener("fetch",evt => {
